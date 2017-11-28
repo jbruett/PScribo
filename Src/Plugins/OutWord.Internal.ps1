@@ -609,7 +609,7 @@
                 $r3 = $p2.AppendChild($XmlDocument.CreateElement('w', 'r', $xmlnsMain));
                 $instrText = $r3.AppendChild($XmlDocument.CreateElement('w', 'instrText', $xmlnsMain));
                 [ref] $null = $instrText.SetAttribute('space', 'http://www.w3.org/XML/1998/namespace', 'preserve');
-                [ref] $null = $instrText.AppendChild($XmlDocument.CreateTextNode(' TOC \o "1-4" \h \z \u '));
+                [ref] $null = $instrText.AppendChild($XmlDocument.CreateTextNode(' TOC \o "1-3" \h \z \u '));
 
                 $r4 = $p2.AppendChild($XmlDocument.CreateElement('w', 'r', $xmlnsMain));
                 $fldChar2 = $r4.AppendChild($XmlDocument.CreateElement('w', 'fldChar', $xmlnsMain));

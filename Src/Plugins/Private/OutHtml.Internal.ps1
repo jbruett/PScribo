@@ -180,7 +180,7 @@
                 }
                 if ($styleElements.Count -gt 0) {
 
-                    [ref] $null = $divBuilder.AppendFormat(' style="{0}">', [String]::Join(' ', $styleElements));
+                    [ref] $null = $divBuilder.AppendFormat(' style="{0}">', [System.String]::Join(' ', $styleElements));
                 }
                 else {
 
@@ -371,18 +371,18 @@
 
                 [System.Text.StringBuilder] $sectionBuilder = New-Object System.Text.StringBuilder;
                 $encodedSectionName = [System.Net.WebUtility]::HtmlEncode($Section.Name);
-                if ($Document.Options['EnableSectionNumbering']) { [string] $sectionName = '{0} {1}' -f $Section.Number, $encodedSectionName; }
-                else { [string] $sectionName = '{0}' -f $encodedSectionName; }
+                if ($Document.Options['EnableSectionNumbering']) { [System.String] $sectionName = '{0} {1}' -f $Section.Number, $encodedSectionName; }
+                else { [System.String] $sectionName = '{0}' -f $encodedSectionName; }
                 [int] $headerLevel = $Section.Number.Split('.').Count;
 
                 ## Html <h5> is the maximum supported level
-                if ($headerLevel -ge 5) {
+                if ($headerLevel -gt 6) {
 
                     WriteLog -Message $localized.MaxHeadingLevelWarning -IsWarning;
-                    $headerLevel = 5;
+                    $headerLevel = 6;
                 }
 
-                if ([string]::IsNullOrEmpty($Section.Style)) {
+                if ([System.String]::IsNullOrEmpty($Section.Style)) {
 
                     $className = $Document.DefaultStyle;
                 }
@@ -553,26 +553,26 @@
                     if ($row.PSObject.Properties[$propertyStyle]) {
 
                         $propertyStyleHtml = (GetHtmlStyle -Style $Document.Styles[$Row.$propertyStyle]);
-                        if ([string]::IsNullOrEmpty($Row.$propertyName)) {
+                        if ([System.String]::IsNullOrEmpty($Row.$propertyName)) {
 
                             [ref] $null = $listTableBuilder.AppendFormat('<td style="{0}">&nbsp;</td></tr>', $propertyStyleHtml);
                         }
                         else {
 
-                            $encodedHtmlContent = [System.Net.WebUtility]::HtmlEncode($row.$propertyName);
+                            $encodedHtmlContent = [System.Net.WebUtility]::HtmlEncode($row.$propertyName.ToString());
                             $encodedHtmlContent = $encodedHtmlContent.Replace([System.Environment]::NewLine, '<br />');
                             [ref] $null = $listTableBuilder.AppendFormat('<td style="{0}">{1}</td></tr>', $propertyStyleHtml, $encodedHtmlContent);
                         }
                     }
                     else {
 
-                        if ([string]::IsNullOrEmpty($Row.$propertyName)) {
+                        if ([System.String]::IsNullOrEmpty($Row.$propertyName)) {
 
                             [ref] $null = $listTableBuilder.Append('<td>&nbsp;</td></tr>');
                         }
                         else {
 
-                            $encodedHtmlContent = [System.Net.WebUtility]::HtmlEncode($row.$propertyName);
+                            $encodedHtmlContent = [System.Net.WebUtility]::HtmlEncode($row.$propertyName.ToString());
                             $encodedHtmlContent = $encodedHtmlContent.Replace([System.Environment]::NewLine, '<br />')
                             [ref] $null = $listTableBuilder.AppendFormat('<td>{0}</td></tr>', $encodedHtmlContent);
                         }
@@ -619,8 +619,15 @@
                     foreach ($propertyName in $Table.Columns) {
 
                         $propertyStyle = '{0}__Style' -f $propertyName;
-                        $encodedHtmlContent = [System.Net.WebUtility]::HtmlEncode($row.$propertyName);
-                        #$encodedHtmlContent = $encodedHtmlContent -replace [System.Environment]::NewLine, '<br />';
+
+                        if ([System.String]::IsNullOrEmpty($Row.$propertyName)) {
+
+                            $encodedHtmlContent = '&nbsp;'; # &nbsp; is already encoded (#72)
+                        }
+                        else {
+
+                            $encodedHtmlContent = [System.Net.WebUtility]::HtmlEncode($row.$propertyName.ToString());
+                        }
                         $encodedHtmlContent = $encodedHtmlContent.Replace([System.Environment]::NewLine, '<br />');
 
                         if ($row.PSObject.Properties[$propertyStyle]) {
@@ -644,7 +651,7 @@
                             }
                             else {
 
-                                [ref] $null = $standardTableBuilder.Append('<td>&nbsp</td>');
+                                [ref] $null = $standardTableBuilder.Append('<td>&nbsp;</td>');
                             }
                         } #end if $row.PropertyStyle
                     } #end foreach property
